@@ -1,4 +1,4 @@
-package br.com.lukinhasssss
+package br.com.lukinhasssss.aws
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest

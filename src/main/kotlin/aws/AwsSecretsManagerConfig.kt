@@ -1,4 +1,4 @@
-package br.com.lukinhasssss
+package br.com.lukinhasssss.aws
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.regions.Region

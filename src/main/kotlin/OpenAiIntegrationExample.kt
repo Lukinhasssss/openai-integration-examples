@@ -1,5 +1,6 @@
 package br.com.lukinhasssss
 
+import br.com.lukinhasssss.aws.SecretsManagerImpl
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.http.Timeout
@@ -8,8 +9,6 @@ import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
 import kotlin.time.Duration.Companion.seconds
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 suspend fun main() {
     val openAiSecrets = SecretsManagerImpl().getSecretAsObject<OpenAiIntegrationSecrets>("openai-integration-secrets")
     val socketTimeout = 60.seconds
@@ -29,5 +28,6 @@ suspend fun main() {
         messages = listOf(system, user)
     )
 
-    openAiService.chatCompletion(completionRequest).choices.forEach { println(it) }
+    openAiService.chatCompletion(completionRequest).choices.forEach { println(it.message.content) }
+    openAiService.close()
 }
