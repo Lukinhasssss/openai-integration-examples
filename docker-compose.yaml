@@ -1,0 +1,19 @@
+name: openai-integration
+
+services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"  # Edge port
+      - "4571:4571"  # Secrets Manager port
+    environment:
+      - SERVICES=secretsmanager # Start only the Secrets Manager service
+      - DEFAULT_REGION=sa-east-1  # Set the default region to sa-east-1
+      - DEBUG=1 # Enable debug mode
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  localstack-data:
