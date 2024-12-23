@@ -5,6 +5,11 @@ import br.com.lukinhasssss.aws.SecretsManagerImpl
 import com.aallam.openai.api.chat.ChatCompletion
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
+import com.aallam.openai.api.exception.AuthenticationException
+import com.aallam.openai.api.exception.InvalidRequestException
+import com.aallam.openai.api.exception.PermissionException
+import com.aallam.openai.api.exception.RateLimitException
+import com.aallam.openai.api.exception.UnknownAPIException
 import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
@@ -55,16 +60,36 @@ object OpenAIUtils {
         model: String = DEFAULT_MODEL_ID,
         service: OpenAI,
         systemPrompts: List<String>,
-    ): ChatCompletion = try {
-        val chatMessages = systemPrompts.map { ChatMessage.System(it) }
+    ): ChatCompletion {
+        var attempts = 0
 
-        val request = ChatCompletionRequest(
-            model = ModelId(model),
-            messages = chatMessages
-        )
+        while (attempts++ <= 3) {
+            try {
+                val chatMessages = systemPrompts.map { ChatMessage.System(it) }
 
-        service.chatCompletion(request)
-    } catch (e: Exception) {
-        throw RuntimeException("Error sending request to OpenAI!", e.cause)
+                val request = ChatCompletionRequest(
+                    model = ModelId(model),
+                    messages = chatMessages
+                )
+
+                service.chatCompletion(request)
+            } catch (e: RateLimitException) {
+                throw RuntimeException("Rate limit exceeded!", e.cause)
+            } catch (e: InvalidRequestException) {
+                throw RuntimeException("Invalid request!", e.cause)
+            } catch (e: AuthenticationException) {
+                throw RuntimeException("Authentication error!", e.cause)
+            } catch (e: PermissionException) {
+                throw RuntimeException("Permission error!", e.cause)
+            } catch (e: UnknownAPIException) {
+                println("Unknown API error! Try again later.")
+                Thread.sleep(3000)
+            } catch (e: Exception) {
+                println("Unknown API error! Try again later.")
+                Thread.sleep(3000)
+            }
+        }
+
+        throw RuntimeException("Error sending request to OpenAI!")
     }
 }
