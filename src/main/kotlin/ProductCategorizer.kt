@@ -5,11 +5,11 @@ import br.com.lukinhasssss.OpenAIUtils.sendRequestToOpenAI
 
 // Constantes
 const val EMPTY = ""
-const val MODEL_ID = "gpt-4-turbo"
+
 
 // Função principal
 suspend fun main() {
-    val openAiService = createOpenAIService()
+    val service = createOpenAIService()
 
     val categories = readValidInput(
         prompt = "\nEnter the valid categories for the products:",
@@ -24,7 +24,12 @@ suspend fun main() {
 
         val systemPrompt = createSystemPrompt(categories)
 
-        val response = sendRequestToOpenAI(openAiService, systemPrompt, productName)
+        val response = sendRequestToOpenAI(
+            service = service,
+            systemPrompt = systemPrompt,
+            userPrompt = productName
+        )
+
         response.choices.forEach { println(it.message.content) }
     }
 }

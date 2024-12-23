@@ -12,6 +12,8 @@ import com.aallam.openai.client.OpenAIConfig
 import kotlin.time.Duration.Companion.seconds
 
 object OpenAIUtils {
+    const val DEFAULT_MODEL_ID = "gpt-4-turbo"
+
     // Função para criar o serviço OpenAI
     fun createOpenAIService(): OpenAI {
         val openAiSecrets = SecretsManagerImpl().getSecretAsObject<OpenAIIntegrationSecrets>("openai-integration-secrets")
@@ -25,8 +27,9 @@ object OpenAIUtils {
         return OpenAI(openAiConfig)
     }
 
-    // Função para enviar requisição ao OpenAI
+    // Função para enviar requisição ao OpenAI utilizando SystemPrompt e UserPrompt
     suspend fun sendRequestToOpenAI(
+        model: String = DEFAULT_MODEL_ID,
         service: OpenAI,
         systemPrompt: String,
         userPrompt: String
@@ -35,11 +38,32 @@ object OpenAIUtils {
         val userMessage = ChatMessage.User(userPrompt)
 
         val completionRequest = ChatCompletionRequest(
-            model = ModelId(MODEL_ID),
+            model = ModelId(model),
             messages = listOf(systemMessage, userMessage)
         )
 
         service.chatCompletion(completionRequest)
+    } catch (e: Exception) {
+        throw RuntimeException("Error sending request to OpenAI!", e.cause)
+    }
+
+    /**
+     * Função para enviar requisição ao OpenAI utilizando somente SystemPrompt
+     * e com a possibilidade de passar uma lista de Prompts
+     */
+    suspend fun sendRequestToOpenAI(
+        model: String = DEFAULT_MODEL_ID,
+        service: OpenAI,
+        systemPrompts: List<String>,
+    ): ChatCompletion = try {
+        val chatMessages = systemPrompts.map { ChatMessage.System(it) }
+
+        val request = ChatCompletionRequest(
+            model = ModelId(model),
+            messages = chatMessages
+        )
+
+        service.chatCompletion(request)
     } catch (e: Exception) {
         throw RuntimeException("Error sending request to OpenAI!", e.cause)
     }
