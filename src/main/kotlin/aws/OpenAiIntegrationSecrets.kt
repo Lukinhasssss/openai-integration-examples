@@ -1,5 +1,5 @@
 package br.com.lukinhasssss.aws
 
-data class OpenAiIntegrationSecrets(
+data class OpenAIIntegrationSecrets(
     val apiKey: String
 )
