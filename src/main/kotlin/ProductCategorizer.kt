@@ -1,5 +1,6 @@
 package br.com.lukinhasssss
 
+import br.com.lukinhasssss.aws.OpenAiIntegrationSecrets
 import br.com.lukinhasssss.aws.SecretsManagerImpl
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
@@ -11,7 +12,7 @@ import kotlin.time.Duration.Companion.seconds
 
 // Constantes
 const val EMPTY = ""
-const val MODEL_ID = "gpt-4"
+const val MODEL_ID = "gpt-4-turbo"
 
 // Função principal
 suspend fun main() {

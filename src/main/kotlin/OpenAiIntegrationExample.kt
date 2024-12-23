@@ -1,5 +1,6 @@
 package br.com.lukinhasssss
 
+import br.com.lukinhasssss.aws.OpenAiIntegrationSecrets
 import br.com.lukinhasssss.aws.SecretsManagerImpl
 import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
