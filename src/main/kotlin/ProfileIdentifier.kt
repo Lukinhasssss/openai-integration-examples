@@ -39,9 +39,7 @@ suspend fun main() {
 
 private fun loadCustomersFromFile(): String =
     try {
-        val path = Path.of(
-            ClassLoader.getSystemResource("purchase_list_with_100_customers.csv").toURI()
-        )
+        val path = Path.of("src/main/resources/purchases/purchase_list_with_10_customers.csv")
         Files.readAllLines(path).joinToString("\n")
     } catch (e: Exception) {
         throw RuntimeException("Error loading the file!", e)
