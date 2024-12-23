@@ -17,6 +17,8 @@ dependencies {
     implementation("io.ktor:ktor-client-core:3.0.2")
     implementation("io.ktor:ktor-client-okhttp:3.0.2")
 
+    implementation("com.aallam.ktoken:ktoken:0.4.0")
+
     testImplementation(kotlin("test"))
 }
 
