@@ -21,17 +21,30 @@ suspend fun main() {
         Weaknesses: [3 bullet points]
     """
 
-    val product = "tapete-de-yoga"
+    val reviewsDirectory = Path.of("src/main/resources/reviews")
+    val reviewsFiles = Files.walk(reviewsDirectory, 1)
+        .filter { it.toString().endsWith(".txt") }
+        .map { it.fileName.toString().removePrefix("reviews-").removeSuffix(".txt") }
+        .toList()
 
-    val userPrompt = loadFile(product)
+    reviewsFiles.forEach { fileName ->
+        println("Analyzing product: $fileName...\n")
 
-    val response = OpenAIUtils.sendRequestToOpenAI(
-        service = service,
-        systemPrompt = systemPrompt,
-        userPrompt = userPrompt
-    ).choices.first().message.content.also { println(it) }
+        val userPrompt = loadFile(fileName)
 
-    saveAnalysis(product, response ?: throw RuntimeException("No response from OpenAI!"))
+        val response = OpenAIUtils.sendRequestToOpenAI(
+            service = service,
+            systemPrompt = systemPrompt,
+            userPrompt = userPrompt
+        ).choices.first().message.content
+
+        saveAnalysis(fileName, response ?: throw RuntimeException("No response from OpenAI!")).also {
+            println("Analysis saved for product: $fileName\n")
+        }
+    }.also {
+        println("\nAll products analyzed!\n")
+        service.close()
+    }
 }
 
 private fun loadFile(fileName: String): String {
